@@ -71,7 +71,8 @@ tests/          vitest suites
 
 ## Deploy
 
-Static site — any host works. On Vercel: import the repo, framework **Vite**, done (`vercel.json` sets caching headers).
+Static site — any host works. `scripts/ship.sh` tests, builds, creates the GitHub repo and deploys to Vercel in one go.
+Or on Vercel: import the repo, framework **Vite**, done (`vercel.json` sets caching headers); every push to `main` then redeploys.
 
 ## Credits & license
 
