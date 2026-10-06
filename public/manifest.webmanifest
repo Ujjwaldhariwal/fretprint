@@ -1,0 +1,10 @@
+{
+  "name": "Fretprint",
+  "short_name": "Fretprint",
+  "description": "Every shape has a name. Map any fretboard shape to exact notes, chord names and piano keys.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#13110f",
+  "theme_color": "#13110f",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

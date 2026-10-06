@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fretprint — every shape has a name</title>
+<meta name="description" content="Tap any shape on a guitar, bass, ukulele, mandolin or banjo fretboard — in any tuning — and Fretprint tells you the exact notes, the chord name, its keys and scales, plays it back in tune, and shows it on a piano. Includes a tuner.">
+<meta name="theme-color" content="#13110f">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preload" href="/samples/manifest.json" as="fetch" crossorigin>
+<meta property="og:title" content="Fretprint">
+<meta property="og:description" content="Every shape has a name. Map custom guitar chords to exact notes, chord names and piano keys.">
+<meta property="og:type" content="website">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/" aria-label="Fretprint home">
+    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="8" fill="#e3b45f"/><path d="M10 8v16M16 8v16M22 8v16" stroke="#1c1406" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="13" r="3.4" fill="#1c1406"/><circle cx="22" cy="19" r="3.4" fill="#1c1406"/></svg>
+    <b>Fretprint<sup>™</sup></b><span>every shape has a name</span>
+  </a>
+  <nav class="seg" aria-label="Mode">
+    <button id="tabBoard" aria-pressed="true">Fretboard</button>
+    <button id="tabTuner" aria-pressed="false">Tuner</button>
+  </nav>
+  <a class="gh" href="https://github.com/" id="ghLink" target="_blank" rel="noopener">Open source</a>
+</header>
+
+<section class="toolbar" aria-label="Instrument setup">
+  <div class="field"><label for="selInst">Instrument</label><select class="select" id="selInst"></select></div>
+  <div class="field"><label for="selTone">Sound <span id="soundStatus" class="status"></span></label><select class="select" id="selTone"></select></div>
+  <div class="field"><label for="selTuning">Tuning</label><select class="select" id="selTuning"></select></div>
+  <div class="tuning-notes mono" id="tuningNotes"></div>
+  <button class="btn ghost" id="btnEditTuning" aria-expanded="false">Edit tuning</button>
+  <div class="field capo" id="capoField"><span class="flabel">Capo</span>
+    <div class="stepper"><button id="capoDown" aria-label="Capo down">−</button><output id="capoOut" class="mono">0</output><button id="capoUp" aria-label="Capo up">+</button></div>
+  </div>
+</section>
+<section class="tedit" id="tuningEditor" hidden aria-label="Tuning editor">
+  <div class="tchips" id="tChips"></div>
+  <input class="input" id="tName" placeholder="Name this tuning" maxlength="40">
+  <button class="btn" id="btnSaveTuning">Save tuning</button>
+  <button class="btn ghost" id="btnDelTuning" hidden>Delete</button>
+</section>
+
+<main id="viewBoard">
+  <section class="board-card">
+    <div class="board-head">
+      <div class="search-wrap">
+        <input class="input search" id="search" placeholder="Find a chord shape — try Cmaj7, F#m7b5, G/B" autocomplete="off" spellcheck="false" aria-label="Find a chord">
+        <kbd>/</kbd>
+      </div>
+      <div class="seg small" aria-label="Marker labels">
+        <button id="lblNotes" aria-pressed="true">Notes</button>
+        <button id="lblDegrees" aria-pressed="false">Degrees</button>
+      </div>
+      <button class="btn ghost" id="btnReset">Reset</button>
+    </div>
+    <div class="search-results" id="searchResults" hidden></div>
+    <div class="board-scroll"><svg id="board" role="img" aria-label="Fretboard. Tap a fret to place a finger; tap left of the nut to mute or open a string."></svg></div>
+    <p class="hint">Tap a fret to place a finger · tap left of the nut to mute · drag across strings to strum · keys <kbd>1</kbd>–<kbd>6</kbd> pluck, <kbd>Space</kbd> strums</p>
+  </section>
+
+  <div class="lower">
+    <div class="side">
+    <section class="card chord-card" aria-label="Chord">
+      <div class="label">Your chord</div>
+      <h1 class="chord-name" id="chordName"></h1>
+      <p class="chord-sub" id="chordSub"></p>
+      <div class="alts" id="chordAlts"></div>
+      <div class="formula" id="formula"></div>
+      <div class="strings-table" id="stringsTable"></div>
+      <div class="shape" id="shapeLine"></div>
+      <div class="actions">
+        <button class="btn primary" id="btnStrum">Strum ↓</button>
+        <button class="btn" id="btnStrumUp">Strum ↑</button>
+        <button class="btn" id="btnArp">Arpeggio</button>
+        <button class="btn" id="btnPiano">Play on piano</button>
+        <button class="btn ghost" id="btnShare">Share link</button>
+      </div>
+      <div class="save-row">
+        <input class="input" id="saveName" placeholder="Name this shape, e.g. Verse 1" maxlength="48">
+        <button class="btn" id="btnSave">Save</button>
+      </div>
+    </section>
+      <section class="card" aria-label="Theory"><div id="theory"></div></section>
+    </div>
+
+    <div class="side">
+      <section class="card" aria-label="Piano">
+        <div class="card-head"><div class="label">On the piano</div><button class="btn ghost small" id="btnCopyNotes">Copy notes</button></div>
+        <div class="piano-wrap"><div class="piano" id="piano"></div></div>
+        <div class="order"><span class="label">Low → high</span><span class="mono" id="noteOrder"></span></div>
+      </section>
+      <section class="card" aria-label="Saved shapes">
+        <div class="card-head"><div class="label">My shapes</div><button class="btn ghost small" id="btnCopyAll">Copy all</button></div>
+        <div class="saved" id="savedList"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<main id="viewTuner" hidden>
+  <section class="tuner">
+    <svg id="gauge" viewBox="0 0 520 270" aria-hidden="true"></svg>
+    <div class="t-note idle" id="tNote">—</div>
+    <div class="t-read mono" id="tRead">Start the tuner and play one string</div>
+    <div class="t-hint" id="tHint"></div>
+    <div class="t-strings" id="tStrings"></div>
+    <div class="t-controls">
+      <button class="btn primary" id="btnMic">Start tuner</button>
+      <label class="switch"><input type="checkbox" id="chkAuto" checked> Detect the string automatically</label>
+      <div class="a4"><span class="flabel">A4</span><div class="stepper"><button id="a4Down" aria-label="Lower reference">−</button><output id="a4Out" class="mono">440</output><button id="a4Up" aria-label="Raise reference">+</button></div><span class="flabel">Hz</span></div>
+    </div>
+    <p class="empty-note">Tap a string to hear its reference pitch. The tuner follows the instrument and tuning chosen above.</p>
+  </section>
+</main>
+
+<footer class="foot">Fretprint™ is free and open source (MIT). Sounds: recorded samples pitch-corrected to equal temperament, with an exactly tuned synthesized string as fallback.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
